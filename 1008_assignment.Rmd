@@ -1,0 +1,79 @@
+---
+title: "1008_assignment"
+author: "he-ping"
+date: "2024-10-14"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+##  Practice 3.2 
+
+Create the following data frame from scratch. In this short and not very scientific experiment, the growth conditions of five plant individuals are to be tested. The height of the plants will be measured at the beginning of the experiment and after one week. The height is a double; the time of the measurement (start_experiment and end_experiment) and the individual plants (plant 1, plant 2,plant 3,plant 4 and plant 5) are character vectors. Reformat this data frame to obtain the height into one single column and the time of the measurement as a factor with two levels. You save this data frame as the first element of a list named my.experiment. The second element of this list will be another list called growth, in which three elements are stored: [1] a character vector extracting the row names of the previously created table ; [2] a numeric vector (double) indicating the change in height of each plant (can be positive or negative, but will be calculated as a percentage of the initial height); [3] a combination of these two elements in a table with two columns: plants and growth. The third element of the my.experiment list will be an arbitrary message about the growth status of these plants.
+
+(1) Create the following data frame from scratch. In this short and not very scientific experiment, the growth conditions of five plant individuals are to be tested. The height of the plants will be measured at the beginning of the experiment and after one week. The height is a double; the time of the measurement (start_experiment and end_experiment) and the individual plants (plant 1, plant 2,plant 3,plant 4 and plant 5) are character vectors.
+
+```{r }
+# create the data frame
+# use [c=] to make the character
+plants <- data.frame(
+  plant = c("plant 1", "plant 2", "plant 3", "plant 4", "plant 5"),
+  start_experiment = c(4, 5, 3, 6, 7),
+  end_experiment = c(9, 6, 5, 4, 7)
+)
+plants
+```
+
+(2) Reformat this data frame to obtain the height into one single column and the time of the measurement as a factor with two levels. You save this data frame as the first element of a list named my.experiment.
+```{r }
+# reformat this data frame <1>
+plants_long <- data.frame(
+  plant = rep(plants$plant, each = 2),
+  height = c(plants$start_experiment, plants$end_experiment),
+  time = factor(rep(c("start_experiment", "end_experiment"), times = 5))
+)
+plants_long
+```
+
+(3) The second element of this list will be another list called growth, in which three elements are stored: [1] a character vector extracting the row names of the previously created table ; [2] a numeric vector (double) indicating the change in height of each plant (can be positive or negative, but will be calculated as a percentage of the initial height); [3] a combination of these two elements in a table with two columns: plants and growth.
+```{r }
+# the change in height of each plant 
+growth_change <- ((plants$end_experiment - plants$start_experiment) / plants$start_experiment) * 100
+
+```
+
+```{r }
+#  create growth list <2>
+growth <- list(
+  row_names = plants$plant,  # [1] extracting the row names 
+  growth_percentage = growth_change, # [2] height of each plant
+  growth_table = data.frame(  # [3] combination of these two elements
+    plants = plants$plant,
+    growth = growth_change
+  )
+)
+growth
+```
+
+
+(4) The third element of the my.experiment list will be an arbitrary message about the growth status of these plants
+```{r }
+#  arbitrary message <3>
+message <- "There is an arbitrary message about the growth status of these plants."
+
+```
+
+(5) Create my.experiment list which including three element 
+```{r }
+#  create my.experiment list
+my.experiment <- list(
+  experiment_data = plants_long,              
+  growth = growth,                               
+  message = message                              
+)
+my.experiment
+
+```
+

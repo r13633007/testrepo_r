@@ -75,4 +75,58 @@ xaxs='i'#remove margion
 getwd()
 
 
+##########################
+####### Practice 4.1 ####
+##########################
+
+# iris dataset
+data("iris")
+iris
+# look all graphy
+pairs (iris[1:4])
+?pairs
+
+# plot
+plot(iris$Petal.Length, iris$Petal.Width,
+     xlab = "Petal length(cm)",
+     ylab = "Petal width(cm)",
+     main = "Petal Length vs. Petal Width",
+     col = c("black", "red", "green")[as.numeric(iris$Species)],
+     pch = c(1, 2, 3)[as.numeric(iris$Species)],
+     cex = 0.5,
+     axes = FALSE ,)
+box()
+
+# range in x/y lable
+x_range <- range(iris$Petal.Length)
+y_range <- range(iris$Petal.Width)
+
+# re-draw axis
+axis(1, at = seq(floor(x_range[1]), ceiling(x_range[2]), by = 1), cex.axis = 0.8)
+axis(2, at = seq(floor(y_range[1]), ceiling(y_range[2]), by = 0.5), cex.axis = 0.8) 
+
+
+# legend lable
+legend("topleft",legend=c("setosa", "versicolor", "virginica"), 
+       col=c("black", "red","green"), 
+       pch=1:3, cex = 0.5) 
+
+# r.squared line
+model <- lm(Petal.Width ~ Petal.Length, data = iris)
+r2_value <- summary(model)$r.squared
+abline(model, col = "black", lwd = 1)
+text(5.5, 0.5, label = paste("R =", round(r2_value, 2)), col = "black", cex=0.7) 
+
+# pdf 
+postscript(file = "control.ps")
+plot(control)
+dev.off()
+
+
+
+
+
+
+
+
 

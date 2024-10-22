@@ -9,22 +9,56 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Practice 4.1
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Using the iris dataset, reproduce the plot below. Explore the function pairs allowing to generate a matrix of scatter plots between variables pairs (iris[1:4]).
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r warning=F , message=F}
-library(tidyverse)
+```{r }
+# iris dataset
+data("iris")
+iris
 ```
 
-## Including Plots
 
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+```{r }
+# look all graphy
+pairs (iris[1:4])
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+```{r }
+# plot
+plot(iris$Petal.Length, iris$Petal.Width,
+     xlab = "Petal length(cm)",
+     ylab = "Petal width(cm)",
+     main = "Petal Length vs. Petal Width",
+     col = c("black", "red", "green")[as.numeric(iris$Species)],
+     pch = c(1, 2, 3)[as.numeric(iris$Species)],
+     cex = 0.8,
+     axes = FALSE ,)
+box()
+
+# range in x/y lable
+x_range <- range(iris$Petal.Length)
+y_range <- range(iris$Petal.Width)
+
+# re-draw axis
+axis(1, at = seq(floor(x_range[1]), ceiling(x_range[2]), by = 1), cex.axis = 0.8)
+axis(2, at = seq(floor(y_range[1]), ceiling(y_range[2]), by = 0.5), cex.axis = 0.8) 
+
+
+# legend label
+legend("topleft",legend=c("setosa", "versicolor", "virginica"), 
+       col=c("black", "red","green"), 
+       pch=1:3, cex = 0.8) 
+
+# r.squared line
+model <- lm(Petal.Width ~ Petal.Length, data = iris)
+r2_value <- summary(model)$r.squared
+abline(model, col = "black", lwd = 1)
+text(5.5, 0.5, label = paste("R =", round(r2_value, 2)), col = "black", cex=1) 
+
+# saving in pdf format
+pdf(file = "1015_assignment.pdf", paper = "A4")
+dev.off()
+```
+

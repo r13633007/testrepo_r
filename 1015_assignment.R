@@ -106,7 +106,7 @@ axis(1, at = seq(floor(x_range[1]), ceiling(x_range[2]), by = 1), cex.axis = 0.8
 axis(2, at = seq(floor(y_range[1]), ceiling(y_range[2]), by = 0.5), cex.axis = 0.8) 
 
 
-# legend lable
+# legend label
 legend("topleft",legend=c("setosa", "versicolor", "virginica"), 
        col=c("black", "red","green"), 
        pch=1:3, cex = 0.5) 
@@ -117,9 +117,8 @@ r2_value <- summary(model)$r.squared
 abline(model, col = "black", lwd = 1)
 text(5.5, 0.5, label = paste("R =", round(r2_value, 2)), col = "black", cex=0.7) 
 
-# pdf 
-postscript(file = "control.ps")
-plot(control)
+# saving in pdf format
+pdf(file = "1015_assignment.pdf", paper = "A4")
 dev.off()
 
 

@@ -377,13 +377,17 @@ calculated as a percentage of the initial height); [3] a combination of
 these two elements in a table with two columns: plants and growth. The
 third element of the my.experiment list will be an arbitrary message
 about the growth status of these plants.</p>
+<ol start="0" style="list-style-type: decimal">
+<li>My pakage</li>
+</ol>
+<pre class="r"><code>library(tidyverse)</code></pre>
 <ol style="list-style-type: decimal">
-<li>Create the following data frame from scratch. In this short and not
-very scientific experiment, the growth conditions of five plant
-individuals are to be tested. The height of the plants will be measured
-at the beginning of the experiment and after one week. The height is a
-double; the time of the measurement (start_experiment and
-end_experiment) and the individual plants (plant 1, plant 2,plant
+<li>My initail data fram: Create the following data frame from scratch.
+In this short and not very scientific experiment, the growth conditions
+of five plant individuals are to be tested. The height of the plants
+will be measured at the beginning of the experiment and after one week.
+The height is a double; the time of the measurement (start_experiment
+and end_experiment) and the individual plants (plant 1, plant 2,plant
 3,plant 4 and plant 5) are character vectors.</li>
 </ol>
 <pre class="r"><code># create the data frame
@@ -401,9 +405,10 @@ plants</code></pre>
 ## 4 plant 4                6              4
 ## 5 plant 5                7              7</code></pre>
 <ol start="2" style="list-style-type: decimal">
-<li>Reformat this data frame to obtain the height into one single column
-and the time of the measurement as a factor with two levels. You save
-this data frame as the first element of a list named my.experiment.</li>
+<li>My long fram:Reformat this data frame to obtain the height into one
+single column and the time of the measurement as a factor with two
+levels. You save this data frame as the first element of a list named
+my.experiment.</li>
 </ol>
 <pre class="r"><code># reformat this data frame &lt;1&gt;
 plants_long &lt;- data.frame(

@@ -9,22 +9,91 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-## R Markdown
+## Practice 4.2
 
-This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+Using the rairuoho dataset you will use a ggplot2 visualization to show that over the course of the experiment the growth of the grass is becoming higher in the nutrient treatment than in the water treatment. You are free to use the visualization that you think makes the most sense Do not forget to embellish your visualization and the use of a legend and/or theme.
 
-When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
-
-```{r cars}
-summary(cars)
+# Read rairuoho dataset
+```{r }
+# read rairuoho dataset 
+url <- "https://www.dipintothereef.com/uploads/3/7/3/5/37359245/rairuoho.txt"
+data <- read.csv(url, header = TRUE, sep = "\t")
+data
 ```
 
-## Including Plots
-
-You can also embed plots, for example:
-
-```{r pressure, echo=FALSE}
-plot(pressure)
+# Install pakage
+```{r }
+# install pakage
+library(dplyr)
+library(tidyr)
+library(ggplot2)
+library(gridExtra)
 ```
 
-Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.
+# Choice the data
+```{r }
+# choice the data
+data_select1 <- data %>%
+  select(-spatial1, -spatial2, -row, -column) %>% #remove
+  mutate(growth = day8 - day3) #caculate growth
+
+data_select2 <- data_select1 %>%
+  select(-day3, -day4, -day5, -day6, -day7, -day8) %>% #remove
+  arrange(desc(treatment == "water"), growth) #group
+data_select2
+```
+
+# Print ggplot
+```{r }
+# ggplot
+p <- ggplot(data_select2, aes(x = treatment, y = growth, fill = treatment)) +
+  geom_boxplot(alpha = 0.7, width = 0.5, outlier.size = 1.5, outlier.shape = 16) + 
+  geom_jitter(width = 0.15, size = 1.0, color = "black", shape = 16) +  
+  labs(
+    title = "Grass Growth under Nutrient and Water Treatments",
+    x = "Treatment Type",
+    y = "Grass Growth (cm)"
+  ) +
+  theme_minimal(base_size = 14) +
+  theme(
+    plot.title = element_text(face = "bold", hjust = 0.31, size = 10),  
+    axis.title = element_text(face = "bold", size = 10),               
+    axis.text = element_text(size = 9, color = "black"),              
+    panel.grid.major = element_blank(),                               
+    panel.grid.minor = element_blank(),                                
+    panel.border = element_rect(color = "black", fill = NA, size = 1),  
+    legend.text = element_text(size = 10, color = "black"),           
+    legend.title = element_text(face = "bold", size = 10, color = "black")
+  ) +
+  scale_fill_manual(values = c("nutrient" = "#2a9d8f", "water" = "#e76f51"))
+p
+```
+
+#  Statistical analysis
+```{r }
+#  ANOVA
+anova_results <- aov(growth ~ treatment, data = data_select2)
+summary(anova_results)
+```
+
+```{r }
+# TukeyHSD
+posthoc_results <- TukeyHSD(anova_results)
+print(posthoc_results)
+```
+
+# Add statistical results
+```{r }
+# statistical results
+p + 
+  geom_segment(aes(x = 1, xend = 2, y = max(data_select2$growth) + 5, yend = max(data_select2$growth) + 5),
+               color = "black", size = 0.6) +  # line
+  geom_text(aes(x = 1.5, y = max(data_select2$growth) + 6, 
+                label = "***"), size = 4, color = "black")  # annotation
+```
+
+# Saving plot 
+```{r, eval = FALSE}
+ggsave("grass_growth_analysis.pdf", plot = last_plot(), 
+       width = 9, height = 7, units = "cm", dpi = 300)
+```

@@ -1,0 +1,94 @@
+---
+title: "R_assignment0924_practice2.2"
+author: "he-ping"
+date: "2024-09-24"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Practice 2.2 
+
+#Using the iris dataset create a new variable with flower colors. 
+#Iris setosa is purple.Iris versicolor is blue. Iris virginica is pink. 
+#Sort individuals by decreasing Sepal.Width. 
+#What can you hypothesize on the size of sepal for these three species. 
+#Get back the data set for the species having the smallest sepal width. 
+#Delete the variable color in this subset*
+
+# read data
+```{r }
+#read data
+library(datasets)
+data(iris)
+iris
+```
+
+# Iris setosa is purple.Iris versicolor is blue. Iris virginica is pink.
+```{r }
+#Iris setosa is purple.Iris versicolor is blue. Iris virginica is pink.
+color <- ifelse(iris$Species == "setosa", 'purple',ifelse(iris$Species == "versicolor", 'blue', 'pink'))
+color
+iris$colors <- ifelse(iris$Species == "setosa", 'purple',ifelse(iris$Species == "versicolor", 'blue', 'pink'))
+iris
+```
+
+# What can you hypothesize on the size of sepal for these three species.
+```{r }
+#What can you hypothesize on the size of sepal for these three species.
+#setosa
+setosa <- iris$Species == "setosa"
+iris_setosa <- iris[setosa, ]
+iris_setosa
+mean_se_len <- mean(iris_setosa$Sepal.Length)
+mean_se_width <- mean(iris_setosa$Sepal.Width)
+mean_se_len
+mean_se_width
+
+```
+
+```{r }
+#versicolor
+versicolor <- iris$Species == "versicolor"
+iris_versicolor <- iris[versicolor, ]
+iris_versicolor
+mean_ve_len <- mean(iris_versicolor$Sepal.Length)
+mean_ve_width <- mean(iris_versicolor$Sepal.Width)
+mean_ve_len
+mean_ve_width
+```
+
+```{r }
+#virginica
+virginica <- iris$Species == "virginica"
+iris_virginica <- iris[virginica, ]
+iris_virginica
+mean_vi_len <- mean(iris_virginica$Sepal.Length)
+mean_vi_width <- mean(iris_virginica$Sepal.Width)
+mean_vi_len
+mean_vi_width
+```
+
+# Get back the data set for the species having the smallest sepal width.
+```{r }
+#Get back the data set for the species having the smallest sepal width.
+mean_se_width
+mean_ve_width
+mean_vi_width
+```
+
+```{r }
+versicolor <- iris$Species == "versicolor"
+iris_versicolor <- iris[versicolor, ]
+iris_versicolor
+mean_ve_width
+```
+
+# Delete the variable color in this subset*
+```{r }
+#Delete the variable color in this subset*
+iris_versicolor$colors<-NULL
+iris_versicolor
+```

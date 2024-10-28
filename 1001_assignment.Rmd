@@ -1,0 +1,71 @@
+---
+title: "R_assignment1001_practice2.3"
+author: "he-ping"
+date: "2024-10-06"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Practice 2.3
+
+The dataset rairuoho is available at the following link. It contains data on 8 days length of Easter grass exposed to different treatments. The 6 variables day3 to day8 are the mean length of the grass on the respective day. germinate is the number of germinated seeds.bed is a factor with four levels (mould1,mould2, paper4, paper8) indicating where the grass grew and how thick it was. treatement has two levels water and nutrient indicating the irrigation scheme (pure water or enriched with nutrients). spatial1 and spatial2 are the vertical and horizontal position of the plot respectively. The variables row and column are meaningless and should be removed.
+
+Instruction: In the variable treatement, nutrient is misleading, as it refers to nutrient- enriched water. Replace nutrient with enriched in the dataset. Reformat the table so that the day is as a single variable (factor) with 6 levels (day3, day4, day5, day6, day7, day8). Another variable length is created to get the length of the grass on the given day. The variables Spatial1 and Spatial2 are merged to obtain the following format for the spatial coordinates of an observation upper_left. Remove the variables row and column.
+
+
+```{r }
+#(0) read url data
+url <- "https://www.dipintothereef.com/uploads/3/7/3/5/37359245/rairuoho.txt"
+data <- read.csv(url, header = TRUE, sep = "\t")
+data
+```
+
+
+```{r }
+#(1) In the variable treatment, nutrient is misleading, as it refers to nutrient- enriched water. Replace nutrient with enriched in the dataset. 
+library(dplyr)
+library(tidyr)
+data_replace <- data %>%
+  mutate(treatment = gsub("nutrient", "enriched", treatment))
+data_replace
+```
+
+```{r }
+#(2) Reformat the table so that the day is as a single variable (factor) with 6 levels (day3, day4, day5, day6, day7, day8). 
+#(3) Another variable length is created to get the length of the grass on the given day.
+data_replace_long <- data_replace %>% 
+  pivot_longer(cols = day3:day8, #select
+               names_to = "day",   #rename
+               values_to = "length") %>%  #order
+  mutate(day = factor(day, levels = c("day3", "day4", "day5", "day6", "day7", "day8"))) #change to one colume
+data_replace_long
+```
+
+```{r }
+#(4) The variables Spatial1 and Spatial2 are merged to obtain the following format for the spatial coordinates of an observation upper_left.
+data_replace_long <- data_replace %>% 
+  mutate(spatial = paste(spatial1, spatial2, sep = "_")) %>% #merge
+  select(-spatial1, -spatial2) %>% #remove
+  pivot_longer(cols = day3:day8, 
+               names_to = "day",   
+               values_to = "length") %>%  
+  mutate(day = factor(day, levels = c("day3", "day4", "day5", "day6", "day7", "day8")))
+data_replace_long
+```
+
+```{r }
+#(5) Remove the variables row and column.
+data_replace_long <- data_replace %>% 
+  mutate(spatial = paste(spatial1, spatial2, sep = "_")) %>%
+  select(-spatial1, -spatial2) %>%
+  select(-row, -column) %>% #remove
+  pivot_longer(cols = day3:day8, 
+               names_to = "day",   
+               values_to = "length") %>%  
+  mutate(day = factor(day, levels = c("day3", "day4", "day5", "day6", "day7", "day8")))
+data_replace_long
+```
+

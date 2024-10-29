@@ -1,0 +1,28 @@
+---
+title: "1029_assignment"
+author: "he-ping"
+date: "2024-10-29"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Practice 5.1
+
+Using the rgbif package download data from any species you like. Make a nice map of the distribution of the selected species. Of course you will fix projection problem when plotting you map. You map can be static or interactive. 
+
+```{r cars}
+summary(cars)
+```
+
+## Including Plots
+
+You can also embed plots, for example:
+
+```{r pressure, echo=FALSE}
+plot(pressure)
+```
+
+Note that the `echo = FALSE` parameter was added to the code chunk to prevent printing of the R code that generated the plot.

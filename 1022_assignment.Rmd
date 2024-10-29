@@ -73,7 +73,8 @@ p
 ```{r }
 #  ANOVA
 anova_results <- aov(growth ~ treatment, data = data_select2)
-summary(anova_results)
+summary(anova_results) # nice
+plot (anova_results) # checking residuals to check assumptions of your model (normality + Homoscedasticity)
 ```
 
 ```{r }

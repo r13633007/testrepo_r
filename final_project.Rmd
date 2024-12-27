@@ -1,0 +1,501 @@
+---
+title: Structure and Function of the Soil Microbiome Underlying N<sub>2</sub>O Emissions
+  from Global Wetlands
+author: "Mohammad Bahram<sup>1,2,9</sup>, Mikk Espenberg<sup>1,9</sup>, Jaan Pärn<sup>1,9</sup>,
+  Laura Lehtovirta-Morley<sup>3</sup>,  \nSten Anslan<sup>1</sup>, Kuno Kasak<sup>1</sup>,
+  Urmas Kõljalg<sup>1</sup>, Jaan Liira<sup>1</sup>, Martin Maddison<sup>1</sup>,
+  \ \nMari Moora<sup>1</sup>, Ülo Niinemets<sup>4</sup>, Maarja Öpik<sup>1</sup>,
+  Meelis Pärtel<sup>1</sup>, Kaido Soosaar<sup>1</sup>,  \nMartin Zobel<sup>1</sup>,
+  Falk Hildebrand<sup>5,6</sup>, Leho Tedersoo<sup>7,8,9</sup>, Ülo Mander<sup>1,9</sup>\n"
+output:
+  pdf_document:
+    toc: true
+  html_document:
+    toc: true
+    toc_float: true
+    number_sections: true
+    theme: united
+---
+1. **Institute of Ecology and Earth Sciences**, University of Tartu, Tartu, Estonia.  
+2. **Department of Ecology**, Swedish University of Agricultural Sciences, Uppsala, Sweden.  
+3. **School of Biological Sciences**, University of East Anglia, Norwich, UK.  
+4. **Institute of Agricultural & Environmental Sciences**, Estonian University of Life Sciences, Tartu, Estonia.  
+5. **Quadram Institute Bioscience**, Norwich, Norfolk, UK.  
+6. **Digital Biology**, Earlham Institute, Norwich, Norfolk, UK.  
+7. **College of Science**, King Saud University, Riyadh, Saudi Arabia.  
+8. **Mycology and Microbiology Center**, University of Tartu, Tartu, Estonia.  
+9. **These authors contributed equally**: Mohammad Bahram, Mikk Espenberg, Jaan Pärn, Leho Tedersoo, Ülo Mander.  
+
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Abstract
+
+　Wetland soils are the greatest source of nitrous oxide (N<sub>2</sub>O), a critical greenhouse gas and ozone depleter released by microbes. Yet, microbial players and processes underlying the N<sub>2</sub>O emissions from wetland soils are poorly understood. Using in situ N<sub>2</sub>O measurements and by determining the structure and potential functional of microbial communities in 645 wetland soil samples globally, we examined the potential role of archaea, bacteria, and fungi in nitrogen (N) cycling and N<sub>2</sub>O emissions. We show that N<sub>2</sub>O emissions are higher in drained and warm wetland soils, and are correlated with functional diversity of microbes. We further provide evidence that despite their much lower abundance compared to bacteria, nitrifying archaeal abundance is a key factor explaining N<sub>2</sub>O emissions from wetland soils globally. Our data suggest that ongoing global warming and intensifying environmental change may boost archaeal nitrifiers, collectively transforming wetland soils to a greater source of N<sub>2</sub>O.
+
+## Introduction
+
+- Wetland soils, covering only **8%** of the terrestrial Earth surface, store some of the largest organic carbon (C) stocks.
+  - Microbial degradation of C and nitrogen (N) stocks can release **greenhouse gases (GHGs)** like nitrous oxide (N₂O).
+  - **N₂O** is a potent GHG with a global warming potential **265 times** that of CO₂ and is the most significant ozone-depleting substance.
+
+- Wetland soils face **land-use changes** such as:
+  - **Afforestation** and conversion to agricultural land, typically preceded by drainage.
+  - These changes have long-term consequences for **N₂O emissions**.
+
+- Key microbial processes contributing to **N₂O production** include:
+  - **Classical denitrification**, **nitrifier denitrification**, and **dissimilatory nitrate reduction to ammonia (DNRA)**, which occur primarily under anoxic conditions.
+  - **Ammonia oxidation**, the first step in nitrification, is an aerobic process performed by Ammonia oxidizing bacteria (AOB), Ammonia oxidizing archaea (AOA), Complete ammonia oxidizers (comammox Nitrospira).
+
+- **Ammonia oxidizing archaea (AOA)**:
+  - Directly produce N₂O and provide substrate for denitrification.
+  - Likely play a pivotal, underexplored role in fueling denitrification and facilitating terrestrial **N₂O emissions**.
+
+- Analysis of **645 wetland soils** using:
+  - Functional metagenomics to estimate relative abundance of N-cycle genes without PCR biases.
+  - Multi-group metabarcoding of bacterial, archaeal, and fungal genes.
+  - Absolute quantification of N-cycle gene abundances.
+  - In situ N₂O flux and ex situ potential N₂ productio analyses.
+  - Genomic data used to understand genetic mechanisms underlying N₂O production.
+
+- Hypotheses:
+  - High **N₂O production** in global wetland soils is primarily related to the **diversity and abundance of nitrifying microbes**.
+  - **Archaeal nitrifiers**, in both absolute and relative abundance to denitrifiers, are the most robust explanatory factor for **N₂O emissions** globally.
+
+## Results and discussion
+
+### **Global Patterns of N2O Fluxes**
+   - Soil temperature and land use impact N2O emissions: Warmer soils and intensive land use increase N2O release from wetland soils.
+   - Emissions increase with temperature: N2O emissions are exponentially related to the temperature of the warmest month.
+   - Land use type is a key factor: Bare soils have the highest N2O emissions, while forest soils have the lowest.
+   - Latitude affects emissions: N2O emissions decrease as latitudes increase, with stronger emissions closer to the equator.
+   - N2 production: The production of N2 (another nitrogen gas) is highest in temperate climates and negatively correlated with land-use intensity.
+
+```{r }
+library(readxl)
+library(ggplot2)
+library(maps)
+library(dplyr)
+```
+
+```{r }
+# data and world map
+data_1a <- read_excel("D:/hpliu/Mikk_dataset/Source_data.xlsx", sheet = "Fig.1a")
+head(data_1a)
+world_map <- map_data("world")
+
+datav2 <- data_1a %>%
+  mutate(N2O_scale = case_when(
+    `N2O` >= -10 & `N2O` <= 10 ~ 1,    
+    `N2O` > 10 & `N2O` <= 100 ~ 5,    
+    `N2O` > 100 & `N2O` <= 500 ~ 8,   
+    TRUE ~ 10                        
+  ))
+head(datav2)
+
+# Plot 
+plot_a <- ggplot() +
+  geom_map(data = world_map, map = world_map,
+           aes(map_id = region), 
+           fill = "gray86", size = 0.5) +
+  geom_point(data = datav2, 
+             position = position_jitter(h = 7, w = 7), #automatically disperse
+             aes(x = Longitude, y = Latitude, shape = datav2$Land_use, color = datav2$`AamoA/nir`, size = datav2$N2O_scale),
+             alpha = 0.7, stroke = 2.5 #stroke:thicker edges
+  ) +
+  scale_shape_manual(values = c(16, 17, 2, 6, 0, 21, 22, 23)) + 
+  scale_color_gradientn(colors = c("#1874CD", "olivedrab3", "#EEC900","red"))+
+  scale_size_continuous(range = c(2, 8)) +  # This keeps the original size scale
+  scale_size_continuous(
+    breaks = c(2, 4, 6, 8),  # Use breaks to control which values to display in the legend
+    labels = c("-2~10", "10~100", "100~500", ">500")  # Change the legend labels
+  ) +
+  theme_minimal() +
+  labs(
+    x = "Longitude", y = "Latitude",
+    color = "AamoA/nir",  # Change the color legend title
+    shape = "Land use",    # Change the shape legend title
+    size = "N2O"           # Change the size legend title
+  ) +
+  theme(legend.position = "right",
+        legend.title = element_text(size = 10, face = "bold"),  # Change legend title size and font
+        legend.text = element_text(size = 10),
+        panel.border = element_rect(color = "black", fill = NA, size = 0.5))  # legend
+plot(plot_a)
+
+```
+
+**Fig.1 istribution of the study sites and their measured N2O emissions as well as the archaeal-nitrifier/denitrifier ratio (archaeal amoA/(nirK + nirS))**   
+
+Typographical symbols (+, ×, or ✱) denote average N2O fluxes per site, the filled/open round, square, and triangle shapes represent different land-use types, and shape color shows the archaeal-nitrifier/denitrifier ratio based on the absolute abundance of gene copies determined by qPCR (n = 72 independent sites).
+
+### **Relationships of Global N2O Fluxes to Microbial Diversity and Taxa**
+   - Microbial diversity varies with latitude: Archaeal diversity increases toward the equator, while bacterial diversity is highest in mid-latitudes.
+   - Soil variables affect microbial diversity: Climate and soil conditions (like pH, C/N ratio) greatly influence microbial diversity.
+   - Archaeal diversity linked to N2O emissions: The presence of archaea (specifically AOA from Thaumarchaeota) correlates strongly with N2O emissions.
+   - Key microbial groups: The most abundant phyla in global wetlands are Proteobacteria, Acidobacteriota, and Chloroflexi, but they aren’t strongly related to N2O emissions.
+   - Functional microbes linked to N2O: Specific archaeal groups (like Nitrosotenuis and Nitrosocosmicus) are more strongly associated with N2O fluxes.
+
+```{r }
+#data
+data_1b <- read_excel("D:/hpliu/Mikk_dataset/Source_data.xlsx", sheet = "Fig1b-d")
+head(data_1b)
+
+data_1bv2 <- data_1b  %>%
+  mutate(LogN2O = log10(15 + N2O)) # calculate
+head(data_1bv2)
+
+# standard error (SE) 
+data_1bv3 <- data_1bv2 %>%
+  group_by(Latitude) %>%
+  summarise(
+    mean_LogN2O = mean(LogN2O, na.rm = TRUE),
+    se_LogN2O = sd(LogN2O, na.rm = TRUE) / sqrt(n())
+  )
+summary(data_1bv3)
+
+data_1bv4 <- lm(mean_LogN2O ~ Latitude, data = data_1bv3)
+data_1bv4
+summary(data_1bv4)
+r_squared <- summary(data_1bv4)$r
+
+
+# Plot
+pcPlot_b<- ggplot(data_1bv3, aes(x = Latitude, y = mean_LogN2O)) +
+  geom_point(color = "black", size = 3) +  # Scatter plot for means
+  geom_errorbar(aes(ymin = mean_LogN2O - se_LogN2O, ymax = mean_LogN2O + se_LogN2O), 
+                width = 1, color = "black") +  # Error bars
+  labs(
+    x = "Latitude", 
+    y = expression("Log"[10] * "15 + N"[2] * "O emission"), 
+    title = expression("N"[2] * "O emission")
+  ) +
+  theme_classic() +
+  theme(
+    panel.border = element_rect(color = "black", fill = NA, size = 0.5)
+  )+
+  scale_x_continuous(
+    limits = c(0, 70),      
+    breaks = seq(0, 70, 10),
+    expand = c(0.01, 0.01)
+    )
+pcPlot_b
+plot_b <- pcPlot_b+
+  stat_smooth(method="gam", color = "red")+
+  annotate("text", 
+           x = 35, y = 3,
+           label = paste("r2 = 0.29", "\n p = 5.642e-07"), 
+           size = 5, color = "black", hjust = 0)
+plot_b
+
+#c
+#data
+data_1c <- read_excel("D:/hpliu/Mikk_dataset/Source_data.xlsx", sheet = "Fig1b-d")
+head(data_1c)
+
+data_1cv2 <- data_1c  %>%
+  mutate(LogN2OA = log10(15 + Archaeal_amoA)) # calculate
+head(data_1cv2)
+
+# standard error (SE) 
+data_1cv3 <- data_1cv2 %>%
+  group_by(Latitude) %>%
+  summarise(
+    mean_LogN2OA = mean(LogN2OA, na.rm = TRUE),
+    se_LogN2OA = sd(LogN2OA, na.rm = TRUE) / sqrt(n())
+  )
+summary(data_1cv3)
+
+data_1cv4 <- lm(mean_LogN2OA ~ Latitude, data = data_1cv3)
+data_1cv4
+summary(data_1cv4)
+
+# Plot
+pcPlot_c <- ggplot(data_1cv3, aes(x = Latitude, y = mean_LogN2OA)) +
+  geom_point(color = "black", size = 3) +  # Scatter plot for means
+  geom_errorbar(aes(ymin = mean_LogN2OA - se_LogN2OA, ymax = mean_LogN2OA + se_LogN2OA), 
+                width = 1, color = "black") +  # Error bars
+  labs(
+    x = "Latitude", 
+    y = expression("Log"[10] * " 15 + Archaeal " * italic(" amoA")),
+    title =  expression("Archaeal "* italic("amoA"))
+  ) +
+  theme_classic() +
+  theme(
+    panel.border = element_rect(color = "black", fill = NA, size = 0.5)
+  )+
+  scale_x_continuous(
+    limits = c(0, 70),      
+    breaks = seq(0, 70, 10),
+    expand = c(0.01, 0.01)
+  )
+plot_c <- pcPlot_c+
+  stat_smooth(method="lm", color = "red")+
+  annotate("text", 
+           x = 3, y = 3,
+           label = paste("r2 = 0.22", "\n p = 2.528e-05"), 
+           size = 5, color = "black", hjust = 0)
+plot_c
+
+#d
+#data
+data_1d <- read_excel("D:/hpliu/Mikk_dataset/Source_data.xlsx", sheet = "Fig1b-d")
+head(data_1d)
+
+data_1dv2 <- data_1d  %>%
+  mutate(LogN2On = log10(15 + nir)) # calculate
+head(data_1dv2)
+
+# standard error (SE) 
+data_1dv3 <- data_1dv2 %>%
+  group_by(Latitude) %>%
+  summarise(
+    mean_LogN2On = mean(LogN2On, na.rm = TRUE),
+    se_LogN2On = sd(LogN2On, na.rm = TRUE) / sqrt(n())
+  )
+summary(data_1dv3)
+
+data_1dv4 <- lm(mean_LogN2On ~ Latitude, data = data_1dv3)
+data_1dv4
+summary(data_1dv4)
+r2_value_1 <- summary(data_1dv4)$r.squared
+
+
+
+# Plot
+pcPlot_d <- ggplot(data_1dv3, aes(x = Latitude, y = mean_LogN2On)) +
+  geom_point(color = "black", size = 3) +  # Scatter plot for means
+  geom_errorbar(aes(ymin = mean_LogN2On - se_LogN2On, ymax = mean_LogN2On + se_LogN2On), 
+                width = 1, color = "black") +  # Error bars
+  labs(
+    x = "Latitude", 
+    y = expression("Log"[10] * " 15 + " * italic("nir")),
+    title =  expression("nir( "* italic("nirK + nirS")*")")
+  ) +
+  theme_classic() +
+  theme(
+    panel.border = element_rect(color = "black", fill = NA, size = 0.5)
+  )+
+  scale_x_continuous(
+    limits = c(0, 70),      
+    breaks = seq(0, 70, 10),
+    expand = c(0.01, 0.01)
+  )
+pcPlot_d
+plot_d <-pcPlot_d +
+  stat_smooth(method="lm", color = "red")+
+  annotate("text", 
+           x = 3, y = 7,
+           label = paste("r2 = 0.0002", "\n p = 0.8924"), 
+           size = 5, color = "black", hjust = 0)
+plot_d
+
+#combine
+library(cowplot)
+combined_plot<-plot_grid(plot_b, plot_c, plot_d, 
+          ncol = 3,   
+          nrow = 1,   
+          rel_widths = c(1, 1, 1)  
+          )
+plot(combined_plot)
+```
+
+**Fig.2 atitudinal gradient of N2O emissions, archaeal amoA and nir (nirK+nirS)**  
+
+Error bars represent the standard error (SE) of the means (n=74 independent sites). The statistical test used was two-sided.
+
+
+### **Metagenomic Analysis of Pathways Underlying Global N2O Fluxes**
+   - Key genes involved in N2O production: Archaeal amoA gene (linked to ammonia oxidation) strongly correlates with N2O emission.
+   - Ammonia oxidation pathway: Thaumarchaeota, including Nitrososphaera and Nitrosocosmicus, are crucial for ammonia oxidation and N2O emission.
+   - Genomic analysis supports findings: A comparison of archaeal genomes shows that ammonia-oxidizing archaea are more abundant than bacteria in wetland soils.
+
+### **Functional Genes Driving Global N2O Fluxes**
+   - qPCR findings: Archaeal and bacterial amoA genes are the most strongly correlated with N2O emissions.
+   - Nitrification plays a key role: Archaeal nitrifiers (rather than denitrifiers) dominate in lower latitudes and contribute more to N2O emissions.
+   - **Gene diversity and N2O emissions**: Higher diversity of N cycle-related genes is associated with higher N2O emissions.
+   - Denitrification genes: Genes for denitrification (like nir and nosZ) show weaker correlations with N2O emissions.
+
+```{r }
+library(corrplot)
+library(reshape)
+library(RColorBrewer)
+
+data_4 <- read_excel("D:/hpliu/Mikk_dataset/Source_data.xlsx", sheet = "Fig4a")
+head(data_4)
+
+numeric_data <- data_4 %>% select(where(is.numeric))
+M<-cor(numeric_data)
+head(round(M,2))
+corrplot(M, type="upper", order="hclust", tl.col="black", tl.srt=40,
+         col=brewer.pal(n=8, name="RdBu"))
+```
+
+**Fig.3 rogen-cycle genes as the main factors explaining N2O emissions across the global wetland soils. a Correlations between environmental**  
+
+variables, the abundance of nir, nosZ and amoA genes (quantified by qPCR) and N2O emission (n = 74). The abbreviations are archaeal amoA (arch-amoA),
+bacterial amoA (bac-amoA), organic matter (OrM), pH (soil pH), C/N (soil carbon to nitrogen ratio), Von Post grade of decomposition (VPG).
+
+### **Environmental Determinants of N2O-Related Microbial Communities**
+   - Soil temperature impacts AOA: Archaeal amoA activity peaks around 20°C, suggesting that warmer soil temperatures can enhance N2O emissions through increased AOA abundance.
+   - AOA/AOB ratio: A higher ratio of AOA to AOB (ammonia-oxidizing bacteria) is positively correlated with soil temperature.
+
+```{r }
+data_1 <- read_excel("D:/hpliu/Mikk_dataset/Source_data.xlsx", sheet = "EDFig.1")
+head(data_1)
+
+data_1v21 <- data_1  %>%
+  mutate(Biome_type = ifelse(data_1$Latitude >= -23.5 & data_1$Latitude <= 23.5, "Tropical", "Non-Tropical"))
+head(data_1v21)
+
+data_1v2 <- data_1v21  %>%
+  mutate(LogN2Oe = log10(15 + N2O)) # calculate
+head(data_1v2)
+data_1v2
+
+# standard error (SE) 
+data_1v3 <- data_1v2 %>%
+  group_by(Latitude) %>%
+  summarise(
+    mean_LogN2Oe = mean(LogN2Oe, na.rm = TRUE),
+    se_LogN2Oe = sd(LogN2Oe, na.rm = TRUE) / sqrt(n()),
+    Max_temperature_of_warmest_month = first(Max_temperature_of_warmest_month),
+    Agricultural_intensity = first(Agricultural_intensity), 
+    Land_use = first(Land_use),  
+    Biome_type = first(Biome_type)
+  ) 
+summary(data_1v3)
+data_1v3
+
+data_1v3$Land_use[data_1v3$Land_use %in% c("hay_field", "peat_extraction", "Recreation")] <- "other"
+
+data_1v3 <- data_1v3 %>%
+  mutate(Land_use = as.factor(Land_use),
+         Biome_type = as.factor(Biome_type),
+         Agricultural_intensity = as.factor(Agricultural_intensity))
+
+data_1v4 <- lm(mean_LogN2Oe ~ Max_temperature_of_warmest_month, data = data_1v3)
+data_1v4
+summary(data_1v4)
+plot(data_1v4)
+r2_value_1 <- summary(data_1v4)$r.squared
+
+# Plot 
+pcPlot_1 <- ggplot(data = data_1v3,aes(x = Max_temperature_of_warmest_month, 
+                                      y = mean_LogN2Oe,
+                                      color = data_1v3$Land_use, 
+                                      size = data_1v3$Agricultural_intensity, 
+                                      shape = data_1v3$Biome_type)) + 
+  geom_point()+
+  geom_errorbar(aes(ymin = mean_LogN2Oe - se_LogN2Oe, ymax = mean_LogN2Oe + se_LogN2Oe), 
+                width = 0.3, color = "black", size = 0.1) +  # Error bars
+  scale_shape_manual(values = c(17, 16)) + 
+  scale_color_manual(
+    values = c(
+      "fen" = "#1874CD", 
+      "forest" = "olivedrab3", 
+      "others" = "#CCCCCC",
+      "arable" = "#FA8072", 
+      "pasture" = "paleturquoise3", 
+      "bog" = "#CD96CD")
+    )+
+  scale_size_manual(
+    values = c(2, 4, 6, 8)
+  )+ 
+  theme_classic() +
+  labs(x = "Max temperature of warmest month", y = expression("Log"[10] * "15 + N"[2] * "O emission"),
+    color = "Land use type",  # Change the color legend title
+    shape = "Biome",    # Change the shape legend title
+    size = "Land use intensity"           # Change the size legend title
+  ) +
+  theme(legend.title = element_text(size = 10, face = "bold"),  # Change legend title size and font
+        legend.text = element_text(size = 10),
+        panel.border = element_rect(color = "black", fill = NA, size = 0.5)) + # legend
+  scale_x_continuous(
+    limits = c(11, 34),      
+    breaks = seq(15, 30, 5),
+    expand = c(0.03, 0.03)
+  )
+pcPlot_1
+
+plot_1 <- pcPlot_1+
+  annotate("text", 
+           x = 13, y = 2.5,
+           label = paste("r2 = 0.2416", "\n p = 0.0003"), 
+           size = 5, color = "black", hjust = 0)+
+  geom_abline(intercept = coef(data_1v4)[1], 
+              slope = coef(data_1v4)[2], 
+              color = "black", linetype = "solid", size = 1)
+plot_1
+
+```
+
+**Fig.4 Relationship between N2O emission and maximum temperature of the warmest month**  
+
+Symbol color corresponds to land-use type, symbol shape corresponds
+to biome type, and symbol size corresponds to the level of land-use intensity, as indicated in
+the legend. Error bars represent the standard errors (SE) of the means (n=74 independent sites).
+* Land-use types with few representative sites (<=3) are shown in the same color for better
+visualization, including peat extraction, recreation, and hay field.
+
+
+### **Implications for Predicting Global N2O Fluxes**
+   - Microbial diversity and climate determine N2O emissions: Both microbial community structure and climate conditions play a critical role in global N2O fluxes.
+   - Archaea’s role in N cycling: Thaumarchaeota, especially AOA, are important for N cycling and N2O emissions in wetland soils.
+   - Future predictions: Increased wetland drainage and warming could lead to higher N2O emissions, as warming boosts archaeal nitrification, which provides more substrates for denitrification.
+   
+
+### **Conclusions**
+   - Nitrifying microbes are key contributors to N2O: Nitrifying archaea (AOA) play a larger role in N2O emissions than previously thought, especially in wetland soils.
+   - Understanding microbial diversity: Both the diversity of microbial taxa and functional genes in the nitrogen cycle are important for predicting N2O emissions.
+   - Environmental factors: Soil temperature, moisture, and pH all influence microbial activity and N2O fluxes, with implications for predicting future emissions in a changing climate. 
+
+## Methodology
+
+### **Collection and Study Locations**
+  The samples for this study were collected from 29 different locations across six continents. The sampling period ranged from August 2011 to June 2018, covering the growing seasons of vegetation. The sampling sites were situated in various climate zones, including tropical rainforests, temperate, and polar regions. A total of 76 wetland soil samples were collected, covering different vegetation types (e.g., mosses, herbaceous plants, shrubs, trees) and land-use types (e.g., natural wetlands, agricultural lands, peat extraction areas). At these locations, land-use intensity was categorized into three levels: 0 (natural), 1 (moderate), and 3 (agriculture), providing a diverse environmental context for studying soil microbial communities and their nitrogen cycling functions.
+
+### **Sampling Station Setup and Measurement Methods**
+  The research team established one to four sampling stations at each site, with distances between stations ranging from 15 meters to 500 meters. In total, 196 sampling stations were set up, each equipped with gas flux measurement devices and groundwater level monitoring facilities to ensure comprehensive observations of soil gas emissions. Nitrous oxide (N₂O) fluxes were measured using the static chamber method, and gas samples were collected at multiple time points for concentration determination. To better understand the changes in soil gases, the team also measured soil temperature and water level fluctuations, which helped to reveal the impact of environmental factors on gas fluxes.
+
+### **Soil and Gas Sample Analysis**
+  Gas samples were analyzed using a gas chromatograph (GC), with linear regression methods used to calculate gas fluxes. Soil samples were sent to the laboratory for chemical analysis, including measurements of nitrogen, carbon content, pH, and available nutrients (such as phosphorus, potassium, calcium, and magnesium). To analyze the microbial community structure, DNA was extracted from soil samples and barcoded using specific primers for metabarcoding, providing detailed information on the community composition of bacteria, archaea, and eukaryotes. These high-throughput sequencing data supported the study of microbial diversity.
+
+### **Genomics and Functional Analysis**
+  In the microbial functional analysis, the study also conducted genomic analyses of nitrogen cycling-related genes. Some soil samples were sequenced using the Illumina NovaSeq platform for high-throughput sequencing, aiming to reveal the abundance and distribution of nitrogen cycling-related genes within microbial communities. The team also used quantitative PCR (qPCR) to quantitatively measure the abundance of nitrogen cycling genes, providing reliable data for subsequent analyses. These data will help to understand the specific functional roles and response mechanisms of wetland microbes in nitrogen cycling.
+
+### **Data Processing and Analysis**
+  All genomic data underwent strict quality control and filtering, with bioinformatics tools like LotuS and MATAFILER used for subsequent processing. These tools helped classify, denoise, and annotate sequences, offering a detailed view of microbial community structure and function. For statistical analysis, the study employed various statistical methods to explore the effects of environmental variables, land-use types, and climate conditions on microbial community composition and nitrogen cycling functions. These analyses provided a comprehensive perspective on the ecological functions of wetland microbial communities.
+
+
+## References
+
+1. Bahram, M., Espenberg, M., Pärn, J., Lehtovirta-Morley, L. E., Anslan, S., Kasak, K., Kõljalg, U., Liira, J., Maddison, M., Moora, M., Niinemets, Ü., Öpik, M., Pärtel, M., Soosaar, K., Zobel, M., Hildebrand, F., Tedersoo, L., & Mander, Ü. (2022). *tructure and function of the soil microbiome underlying N2O emissions from global wetlands.*Nature Communications, 13(1). https://doi.org/10.1038/s41467-022-29161-3
+
+2. Yin, C., Schlatter, D. C., Kroese, D. R., Paulitz, T. C., Paulitz, T. C., & Hagerty, C. H. (2021).*Responses of Soil Fungal Communities to Lime Application in Wheat Fields in the Pacific Northwest.*Frontiers in Microbiology, 12, 576763. https://doi.org/10.3389/FMICB.2021.576763
+
+3. The R Graph Gallery.  
+https://r-graph-gallery.com/
+
+4. Statistical tools for high-throughput data analysis.  
+https://www.sthda.com/english/
+
+5. Fundamentals of Data Visualization.  
+https://clauswilke.com/dataviz/
+
+6. Introductory Data Science using R.  
+https://bookdown.org/dereksonderegger/444/
+
+7. Colors in R.  
+https://r-charts.com/colors/
+
+## About thankful
+As I reflect on my journey of learning the R language, I realize how much I’ve grown, both in terms of technical skills and personal perseverance. When I first started, the language seemed daunting—full of commands, functions, and syntax that I couldn’t immediately grasp. But thanks to your steady guidance, I was able to take it step by step, gradually building a solid foundation in R.  
+
+Throughout this semester, I’ve asked a lot of questions, and each one brought me a little closer to understanding the complexities of R. The process wasn’t always easy, but I’ve learned to embrace the challenges. I can feel my understanding deepening with every lesson and every line of code that finally clicked into place. The satisfaction of solving a problem, creating a graph, or running an analysis always made it worth the effort, and it made me more determined to keep learning.  
+
+I’m especially grateful to you, for your patience and careful explanations. Your attention to detail and willingness to address each question, no matter how small, made this journey possible. Thank you for your dedication and for making sure I not only learned the concepts but also understood how to apply them effectively. Your encouragement has been a huge source of motivation whenever I faced difficulties or moments of doubt.
+

@@ -140,7 +140,10 @@ p
 #  ANOVA
 anova_results <- aov(growth ~ treatment, data = data_select2)
 summary(anova_results)
+<<<<<<< HEAD
 plot (anova_results) # checking residuals to check assumptions of your model (normality + Homoscedasticity)
+=======
+>>>>>>> d930608392629c3417e2269e8c4e2eca7c1b2adc
 
 # TukeyHSD
 posthoc_results <- TukeyHSD(anova_results)
